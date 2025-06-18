@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Admin Dashboard</title>
+    <title>Admin Categories Page</title>
     @vite('resources/css/app.css')
 </head>
 
