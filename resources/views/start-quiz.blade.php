@@ -15,7 +15,7 @@
         <h2 class="text-lg text-center text-green-700 font-bold mb-6">This Quiz Contain {{$quizCount}} Questions and no limit to attempt this Quiz</h2>
         <h1 class="text-2xl text-center text-green-700 font-bold mb-6">Good Luck</h1>
         @if(session('user'))
-        <a type="submit" href="" class=" px-4 py-2 my-3 border bg-blue-400 rounded-md text-white">Start Quiz</a>
+        <a type="submit" href="/mcq/{{session('firstMCQ')->id.'/'.$quizName}}" class=" px-4 py-2 my-3 border bg-blue-400 rounded-md text-white">Start Quiz</a>
         @else
         <a type="submit" href="/user-signup-quiz" class=" px-4 py-2 my-3 border bg-blue-400 rounded-md text-white">SignUp for Start Quiz</a>
         <a type="submit" href="/user-login-quiz" class=" px-4 py-2 my-3 border bg-blue-400 rounded-md text-white">Login for Start Quiz</a>

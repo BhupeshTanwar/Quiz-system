@@ -30,8 +30,10 @@ class UserController extends Controller
 
     function startQuiz($id, $name)
     {
-
         $quizCount = Mcq::where('quiz_id', $id)->Count();
+        $mcqs = Mcq::where('quiz_id', $id)->get();
+        Session::put('firstMCQ', $mcqs[0]);
+
         $quizName = $name;
         return view('start-quiz', ['quizName' => $quizName, 'quizCount' => $quizCount]);
     }
@@ -103,5 +105,10 @@ class UserController extends Controller
     {
         Session::put('quiz-url', url()->previous());
         return view('user-login');
+    }
+
+    function mcq($id, $name)
+    {
+        return view('mcq-page');
     }
 }
