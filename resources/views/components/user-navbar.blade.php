@@ -6,8 +6,13 @@
         <div class=" space-x-3">
             <a class="text-green-700 hover:text-blue-500" href="/">Home</a>
             <a class="text-green-700 hover:text-blue-500" href="/admin-categories">Categories</a>
-            <a class="text-green-700 hover:text-blue-500" href="">Login</a>
+            @if(session('user'))
+            <a class="text-green-700 hover:text-blue-500" href="">Welcome ,{{session('user')->name}}</a>
+            <a class="text-green-700 hover:text-blue-500" href="/user-logout">Logout</a>
+            @else
+            <a class="text-green-700 hover:text-blue-500" href="/user-login">Login</a>
             <a class="text-green-700 hover:text-blue-500" href="/user-signup">SignUp</a>
+            @endif
             <a class="text-green-700 hover:text-blue-500" href="/admin-logout">Blog</a>
         </div>
     </div>
