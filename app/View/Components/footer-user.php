@@ -8,6 +8,7 @@ use Illuminate\View\Component;
 
 class footer-user extends Component
 {
+    
     /**
      * Create a new component instance.
      */
