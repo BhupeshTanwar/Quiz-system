@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Admin Categories Page</title>
+    <title>Category : {{str_replace('-',' ',$category)}}</title>
     @vite('resources/css/app.css')
 </head>
 
@@ -10,7 +10,7 @@
     <x-user-navbar></x-user-navbar>
 
     <div class="bg-white-100 flex flex-col items-center min-h-screen pt-8">
-        <h2 class="text-2xl text-center text-green-700 font-bold mb-6">Category Name : {{$category}}
+        <h2 class="text-2xl text-center text-green-700 font-bold mb-6">Category Name : {{str_replace('-',' ',$category)}}
         </h2>
         <div class="w-200">
             <ul class="border border-gray-200">
@@ -29,7 +29,7 @@
                         <li class="w-110 ">{{$item->name}}</li>
                         <li class="w-30 ">{{$item->mcq_count}}</li>
                         <li class="w-30">
-                            <a href="/start-quiz/{{$item->id}}/{{$item->name}}" class="text-green-500 font-bold">Attempt Quiz</a>
+                            <a href="/start-quiz/{{$item->id}}/{{str_replace(' ','-',$item->name)}}" class="text-green-500 font-bold">Attempt Quiz</a>
                         </li>
                     </ul>
                 </li>

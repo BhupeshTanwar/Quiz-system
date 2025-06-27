@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Admin Categories Page</title>
+    <title>{{str_replace('-',' ',$quizName)}}</title>
     @vite('resources/css/app.css')
 </head>
 
@@ -13,9 +13,9 @@
         <p class="text-green-500 font-bold">{{session('message-success')}}</p>
     </div>
     @endif
-    
+
     <div class="bg-white-100 flex flex-col items-center min-h-screen pt-8">
-        <h1 class="text-4xl text-center text-green-700 font-bold mb-6">{{$quizName}}
+        <h1 class="text-4xl text-center text-green-700 font-bold mb-6">{{str_replace('-',' ',$quizName)}}
         </h1>
         <h2 class="text-lg text-center text-green-700 font-bold mb-6">This Quiz Contain {{$quizCount}} Questions and no limit to attempt this Quiz</h2>
         <h1 class="text-2xl text-center text-green-700 font-bold mb-6">Good Luck</h1>
