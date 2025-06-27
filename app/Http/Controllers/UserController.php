@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 
 use App\Models\Category;
 use App\Models\Quiz;
@@ -11,6 +13,8 @@ use App\Models\Mcq;
 use App\Models\User;
 use App\Models\Record;
 use App\Models\MCQ_Record;
+use App\Mail\VerifyUser;
+use App\Mail\UserForgotPassword;
 use Illuminate\Http\Request;
 
 use function Pest\Laravel\get;
@@ -95,6 +99,16 @@ class UserController extends Controller
             return "User not valid , Please check email and password again !";
         }
 
+
+        //
+
+        $link = Crypt::encryptString($user->email);
+        $link = url('/verify-user/' . $link);
+        Mail::to($user->email)->send(new VerifyUser($link));
+
+        //
+
+
         if ($user) {
             Session::put('user', $user);
             if (Session::has('quiz-url')) {
@@ -176,26 +190,72 @@ class UserController extends Controller
         } else {
             $resultData = MCQ_Record::WithMCQ()->where('record_id', $currentQuiz['recordId'])->get();
             $correctAnswers = MCQ_Record::where([
-                ['record_id','=', $currentQuiz['recordId']],
-                ['is_correct','=', 1],
+                ['record_id', '=', $currentQuiz['recordId']],
+                ['is_correct', '=', 1],
             ])->count();
 
-            $record =Record::find($currentQuiz['recordId']);
-            if($record){
-                $record->status=2;
+            $record = Record::find($currentQuiz['recordId']);
+            if ($record) {
+                $record->status = 2;
                 $record->update();
             }
-            return view('quiz-result', ['resultData' => $resultData,'correctAnswers'=>$correctAnswers]);
+            return view('quiz-result', ['resultData' => $resultData, 'correctAnswers' => $correctAnswers]);
         }
     }
 
-    function userDetails(){
-         $quizRecord=Record::WithQuiz()->where('user_id',Session::get('user')->id)->get();
-        return view('user-details',['quizRecord'=>$quizRecord]);
+    function userDetails()
+    {
+        $quizRecord = Record::WithQuiz()->where('user_id', Session::get('user')->id)->get();
+        return view('user-details', ['quizRecord' => $quizRecord]);
     }
 
-    function searchQuiz(Request $req){
-         $quizData=Quiz::withCount('Mcq')->where('name','Like','%'.$req->search.'%')->get();
-        return view('quiz-search',['quizData'=>$quizData,'quiz'=>$req->search]);
+    function searchQuiz(Request $req)
+    {
+        $quizData = Quiz::withCount('Mcq')->where('name', 'Like', '%' . $req->search . '%')->get();
+        return view('quiz-search', ['quizData' => $quizData, 'quiz' => $req->search]);
+    }
+
+    function verifyUser($email)
+    {
+        $orgEmail = Crypt::decryptString($email);
+        $user = User::where('email', $orgEmail)->first();
+        if ($user) {
+            $user->active = 2;
+            if ($user->save()) {
+                return redirect('/');
+            }
+        }
+    }
+
+    function userForgotPassword(Request $req)
+    {
+        $link = Crypt::encryptString($req->email);
+        $link = url('/user-forgot-password/' . $link);
+        Mail::to($req->email)->send(new UserForgotPassword($link));
+        return redirect("/");
+    }
+
+    function userResetForgotPassword($email)
+    {
+        $orgEmail = Crypt::decryptString($email);
+        return view('user-set-forgot-password', ['email' => $orgEmail]);
+    }
+
+    function userSetForgotPassword(Request $req)
+    {
+        $validate = $req->validate([
+            'email' => 'required|email',
+            'password' => 'required |min :3 |confirmed'
+        ]);
+
+        $user = User::where('email', $req->email)->first();
+        if($user){
+            $user->password=Hash::make($req->password);
+            if($user->save()){
+                return redirect('user-login');
+            }
+            
+        }
+
     }
 }
