@@ -25,9 +25,10 @@ class UserController extends Controller
     //
     function welcome()
     {
-        $categories = Category::withCount('quizzes')->get();
-        //$categories=Category::get();
-        return view('welcome', ['categories' => $categories]);
+        $categories = Category::withCount('quizzes')->orderBy('quizzes_count','desc')->take(5)->get();
+
+        $quizData = Quiz::withCount('Records')->orderBy('records_count','desc')->take(5)->get();
+        return view('welcome', ['categories' => $categories,'quizData'=>$quizData]);
     }
 
     function userQuizList($id, $category)
@@ -116,9 +117,9 @@ class UserController extends Controller
             if (Session::has('quiz-url')) {
                 $url = Session::get('quiz-url');
                 Session::forget('quiz-url');
-                return redirect($url)->with('message-success', "User Registered Successfully , Please ! check email to verify account.");
+                return redirect($url)->with('message-success', "User Login Successfully !");
             } else {
-                return redirect('/')->with('message-success', "User Registered Successfully , Please ! check email to verify account.");
+                return redirect('/')->with('message-success', "User Login Successfully !");
             }
         }
     }
