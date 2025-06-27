@@ -12,6 +12,9 @@
         <h1 class="text-4xl font-bold text-green-700 p-5">Quiz Result</h1>
 
         <div class="w-200">
+            @if($correctAnswers*100/count($resultData)>70)
+            <a class="text-green-500 font-bold block " href="/certificate">View And Download Certificate</a>
+            @endif
             <h1 class="text-2xl text-green-700 text-center my-5">{{$correctAnswers}} Out of {{count($resultData)}} Correct</h1>
             <ul class="border border-gray-200">
                 <li class="p-2 font-bold">

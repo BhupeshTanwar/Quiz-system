@@ -266,4 +266,12 @@ class UserController extends Controller
             }
         }
     }
+
+    function certificate(){
+        $data=[];
+
+        $data['quiz']=str_replace('-',' ',Session::get('currentQuiz')['quizName']);
+        $data['name']=Session::get('user')['name'];
+        return view('certificate',['data'=>$data]);
+    }
 }
