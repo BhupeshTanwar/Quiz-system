@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
+use Spatie\Browsershot\Browsershot;
 
 use App\Models\Category;
 use App\Models\Quiz;
@@ -16,6 +17,7 @@ use App\Models\MCQ_Record;
 use App\Mail\VerifyUser;
 use App\Mail\UserForgotPassword;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 
 use function Pest\Laravel\get;
 use function Ramsey\Uuid\v1;
@@ -25,15 +27,16 @@ class UserController extends Controller
     //
     function welcome()
     {
-        $categories = Category::withCount('quizzes')->orderBy('quizzes_count','desc')->take(5)->get();
+        $categories = Category::withCount('quizzes')->orderBy('quizzes_count', 'desc')->take(5)->get();
 
-        $quizData = Quiz::withCount('Records')->orderBy('records_count','desc')->take(5)->get();
-        return view('welcome', ['categories' => $categories,'quizData'=>$quizData]);
+        $quizData = Quiz::withCount('Records')->orderBy('records_count', 'desc')->take(5)->get();
+        return view('welcome', ['categories' => $categories, 'quizData' => $quizData]);
     }
 
-    function categories(){
-        $categories = Category::withCount('quizzes')->orderBy('quizzes_count','desc')->paginate(3);
-        return view('categories-list',['categories'=>$categories]);
+    function categories()
+    {
+        $categories = Category::withCount('quizzes')->orderBy('quizzes_count', 'desc')->paginate(3);
+        return view('categories-list', ['categories' => $categories]);
     }
 
     function userQuizList($id, $category)
@@ -104,7 +107,7 @@ class UserController extends Controller
         $user = User::where('email', $req->email)->first();
 
         if (!$user || ! Hash::check($req->password, $user->password)) {
-            return redirect('user-login')->with('message-error',"User not valid , Please check email and password again !");
+            return redirect('user-login')->with('message-error', "User not valid , Please check email and password again !");
         }
 
 
@@ -267,11 +270,28 @@ class UserController extends Controller
         }
     }
 
-    function certificate(){
-        $data=[];
+    function certificate()
+    {
+        $data = [];
 
-        $data['quiz']=str_replace('-',' ',Session::get('currentQuiz')['quizName']);
-        $data['name']=Session::get('user')['name'];
-        return view('certificate',['data'=>$data]);
+        $data['quiz'] = str_replace('-', ' ', Session::get('currentQuiz')['quizName']);
+        $data['name'] = Session::get('user')['name'];
+        return view('certificate', ['data' => $data]);
+    }
+
+
+    function downloadCertificate()
+    {
+        $data = [];
+
+        $data['quiz'] = str_replace('-', ' ', Session::get('currentQuiz')['quizName']);
+        $data['name'] = Session::get('user')['name'];
+        $html = view('download-certificate', ['data' => $data])->render();
+        return response(
+            Browsershot::html($html)->pdf()
+        )->withHeaders([
+            'Content-Type' => "application/pdf",
+            'Content-disposition' => "attachment;filename=certificate.pdf"
+        ]);
     }
 }
