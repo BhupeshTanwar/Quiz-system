@@ -1,9 +1,9 @@
-<nav class="bg-white shadow-md px-4 py-3">
+<nav class="bg-white shadow-md px-4 py-3 font-semibold">
     <div class="flex justify-between item-center">
-        <div class="text-2xl text-gray-700 hover:text-blue-500 cursor-pointer">
+        <div class="text-2xl  text-gray-700 text-shadow-sm hover:text-blue-500 cursor-pointer">
             Quiz System
         </div>
-        <div class=" space-x-3">
+        <div class=" space-x-3 text-shadow-xs">
             <a class="text-gray-700 hover:text-blue-500" href="/dashboard">Dashboard</a>
             <a class="text-gray-700 hover:text-blue-500" href="/admin-categories">Categories</a>
             <a class="text-gray-700 hover:text-blue-500" href="/add-quiz">Quiz</a>
